@@ -1,0 +1,75 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Profile Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .profile {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>GitHub Profile Viewer</h1>
+    <div>
+        <input type="text" id="username" placeholder="Enter GitHub username">
+        <button onclick="getProfile()">Get Profile</button>
+    </div>
+    <div class="profile" id="profile">
+        <!-- Profile information will be displayed here -->
+    </div>
+
+    <script>
+	
+	function getProfile() {
+    const username = document.getElementById('username').value;
+    if (!username) {
+        alert('Enter your Github username')
+        return
+    }
+
+    fetch(`https://api.github.com/users/${username}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network error')
+            }
+            return response.json();
+        }
+        )
+
+        .then(data => {
+            displayProfile(data);
+        })
+        .catch(err => {
+            console.error('There was a problem with the fetch operation: ',err)
+        })
+}
+
+function displayProfile(data){
+    const profileElement = document.getElementById('profile')
+    profileElement.innerHTML = `<img src="${data.avatar_url}" alt="${data.login}" width="150" height="150">
+    <h2>${data.login}</h2>
+    <p>Name: ${data.name || 'N/A'}</p>
+    <p>Bio: ${data.bio || 'N/A'}</p>
+    <p>Location: ${data.location || 'N/A'}</p>
+    <p>Followers: ${data.followers}</p>
+    <p>Following: ${data.following}</p>
+    <p>Public Repos: ${data.public_repos}</p>
+    <a href="${data.html_url}" target="_blank">View Profile on GitHub</a>
+`;
+}
+	
+	</script>
+</body>
+</html>
